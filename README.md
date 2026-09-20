@@ -93,6 +93,30 @@ The query library ([`sql/queries.sql`](sql/queries.sql)) builds up in difficulty
 | Q6 | `CASE` expressions — full league table rebuilt from raw data |
 | Q7 | CTE (`WITH`) + window function (`RANK() OVER`) |
 
+## 📈 Key findings
+
+A few results the query library surfaces (all figures computed from the raw
+data — 1,900 matches, 2019/20 → 2023/24):
+
+**Q7 — the 2023/24 Premier League table, rebuilt from raw match rows.** The
+`CASE` + window-function query reproduces the real final table exactly:
+
+| Pos | Team | Pld | Pts | GF | GA | GD |
+|----:|------|----:|----:|---:|---:|---:|
+| 1 | Man City | 38 | 91 | 96 | 34 | +62 |
+| 2 | Arsenal | 38 | 89 | 91 | 29 | +62 |
+| 3 | Liverpool | 38 | 82 | 86 | 41 | +45 |
+| … | | | | | | |
+| 20 | Sheffield United | 38 | 16 | 35 | 104 | −69 |
+
+**Q1 — highest-scoring matches (2023/24).** Chelsea 4–4 Man City and Newcastle
+4–4 Luton top the list, but the standout scoreline is **Sheffield United 0–8
+Newcastle** — the same defence that shipped 104 goals across the season.
+
+**League-wide, across all five seasons:** home advantage is real but modest —
+**44.1%** of matches are home wins, **33.2%** away wins, **22.7%** draws, at an
+average of **2.87 goals per match**.
+
 ## 🚀 Running it yourself
 
 **Prerequisites:** PostgreSQL 16, Python 3, and the Python packages
