@@ -130,3 +130,20 @@ SELECT RANK() OVER (ORDER BY points DESC, goal_diff DESC) AS position,
        goal_diff
 FROM league_table
 ORDER BY position;
+
+
+-- ------------------------------------------------------------
+-- Q8. Home advantage by season: % of home wins, draws and
+--     away wins. Did empty stadiums (2020/21, COVID) matter?
+--     Concepts: aggregate inside a WINDOW function -
+--     SUM(COUNT(*)) OVER (PARTITION BY season) gives each
+--     season's total without collapsing the result rows.
+--     Charted by analysis/home_advantage.py.
+-- ------------------------------------------------------------
+SELECT s.label AS season,
+       m.result,
+       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (PARTITION BY s.label), 1) AS pct
+FROM matches m
+JOIN seasons s ON s.id = m.season_id
+GROUP BY s.label, m.result
+ORDER BY season, m.result;
