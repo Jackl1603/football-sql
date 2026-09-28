@@ -5,8 +5,14 @@ data** (5 seasons, ~1,900 matches). The project designs a normalised PostgreSQL
 schema, ingests raw match CSVs with a Python pipeline, and answers football
 questions with SQL — from simple lookups up to window functions.
 
+**The question:** can a well-designed database answer real football questions,
+such as who topped the table, how big home advantage is, and whether it survived
+empty stadiums, using SQL alone?
+
 Built as a portfolio project to demonstrate end-to-end data skills: **data
-modelling → ingestion (ETL) → analysis**.
+modelling → ingestion (ETL) → analysis**. The same data feeds my
+[football-match-predictor](https://github.com/Jackl1603/football-match-predictor),
+a machine-learning model of match results.
 
 ---
 
@@ -92,6 +98,7 @@ The query library ([`sql/queries.sql`](sql/queries.sql)) builds up in difficulty
 | Q5 | Self-join (opponent lookup for goals conceded) |
 | Q6 | `CASE` expressions — full league table rebuilt from raw data |
 | Q7 | CTE (`WITH`) + window function (`RANK() OVER`) |
+| Q8 | Aggregate inside a window function (`SUM(COUNT(*)) OVER (PARTITION BY …)`) |
 
 ## 📈 Key findings
 
@@ -113,9 +120,16 @@ data — 1,900 matches, 2019/20 → 2023/24):
 4–4 Luton top the list, but the standout scoreline is **Sheffield United 0–8
 Newcastle** — the same defence that shipped 104 goals across the season.
 
-**League-wide, across all five seasons:** home advantage is real but modest —
-**44.1%** of matches are home wins, **33.2%** away wins, **22.7%** draws, at an
+**League-wide, across all five seasons:** home advantage is real but modest.
+**44.1%** of matches are home wins, **33.2%** away wins and **22.7%** draws, at an
 average of **2.87 goals per match**.
+
+**Q8: home advantage disappeared without fans.** In 2020/21, when matches were
+played behind closed doors, away wins (40.3%) outnumbered home wins (37.9%). It's
+the only season of the five where that happens. Once crowds returned, home wins
+climbed back to a peak of 48.4% in 2022/23.
+
+![Home advantage by season](figures/home_advantage.png)
 
 ## 🚀 Running it yourself
 
@@ -138,6 +152,7 @@ python load_data.py
 ```
 
 Then open `sql/queries.sql` in DBeaver (or run with `psql`) and explore.
+To regenerate the chart: `pip install matplotlib`, then `python analysis/home_advantage.py`.
 
 > The code reads the DB password from the `PGPASSWORD` environment variable, so
 > no credentials live in the repo.
@@ -149,7 +164,10 @@ football-sql/
 ├── README.md
 ├── load_data.py        # ETL: downloads CSVs and loads them into PostgreSQL
 ├── data/               # raw season CSVs (one per season)
+├── analysis/
+│   └── home_advantage.py  # runs Q8 via pandas and draws the chart
+├── figures/            # charts used in this README
 └── sql/
     ├── schema.sql      # table definitions, keys, constraints, indexes
-    └── queries.sql     # the analytical query library (Q1–Q7)
+    └── queries.sql     # the analytical query library (Q1–Q8)
 ```
